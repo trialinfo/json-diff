@@ -118,17 +118,17 @@ var json_diff = (function() {
       //row[j] now contains the length of the lcs
       //compute the edit sequence from the table
       var edit = [];
-      while (i > -1 && j > -1){
-	switch (c[i][j]){
+      while (i > -1 && j > -1) {
+	switch (c[i][j]) {
 	  default:
 	    edit.unshift('=');
 	    i--; j--;
 	    break;
-	  case (j && c[i][j-1]):
+	  case j && c[i][j - 1]:
 	    edit.unshift('+');
 	    j--;
 	    break;
-	  case (i && c[i-1][j]):
+	  case i && c[i - 1][j]:
 	    edit.unshift('-');
 	    i--;
 	    break;
