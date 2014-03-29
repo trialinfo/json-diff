@@ -69,6 +69,12 @@ expect({baz: 'qux', foo: 'bar'}, {baz: 'boo', foo: 'bar'}, [{op: 'replace', path
 expect({foo: 'bar'}, {foo: 'bar', child: {grandchild: {}}}, [{op: 'add', path: '/child', value: {'grandchild': {}}}])
 expect({foo: ['bar']}, {foo: ['bar', ['abc', 'def']]}, [{op: 'add', path: '/foo/1', value: ['abc', 'def']}])
 
+// The following cases produce non-optimal diffs:
+expect([1, 0, 0], [1, 1, 0], [{op: 'add', path: '/1', value: 1}, {op: 'remove', path: '/3'}]);
+// ideal: [{op: 'replace', path: '/1', value: 1}]
+expect([1, 1, 0], [1, 0, 0], [{op: 'remove', path: '/1'}, {op: 'add', path: '/2', value: 0}]);
+// ideal: [{op: 'replace', path: '/1', value: 0}]
+
 if (failures) {
   console.log(failures + ' FAILURE(S)');
   process.exit(1);

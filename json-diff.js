@@ -156,6 +156,7 @@ var json_diff = (function() {
 	} else
 	  edit_replace.push(edit[n]);
       }
+      // console.log('>>> ' + edit.join('') + ' ' + edit_replace.join(''));
       edit = edit_replace;
 
       for (i = 0, j = 0, n = 0; n < edit.length; n++) {
