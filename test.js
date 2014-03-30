@@ -72,6 +72,11 @@ expect({baz: 'qux', foo: 'bar'}, {baz: 'boo', foo: 'bar'}, [{op: 'replace', path
 expect({foo: 'bar'}, {foo: 'bar', child: {grandchild: {}}}, [{op: 'add', path: '/child', value: {'grandchild': {}}}])
 expect({foo: ['bar']}, {foo: ['bar', ['abc', 'def']]}, [{op: 'add', path: '/foo/1', value: ['abc', 'def']}])
 
+// In this case, it would be better to replace the entire array:
+expect([0, 0], [1, 1],
+       [{op: 'replace', path: '/0', value: 1}, {op: 'replace', path: '/1', value: 1}]);
+// [{op: 'replace', path: '/', value: [1, 1]}]
+
 if (failures) {
   console.log(failures + ' FAILURE(S)');
   process.exit(1);
