@@ -88,45 +88,58 @@ var json_diff = (function() {
       var i, j, m, n,
 	  row = [], c = [],
 	  left, diag, latch;
+      var skip, edit = [];
 
       m = a.length;
       n = b.length;
 
-      //build the c-table
-      for (j = 0; j < n; row[j++] = 0);
-      for (i = 0 ; i < m; i++) {
-	c[i] = row = row.slice();
-	for (diag = 0, j = 0; j < n; j++, diag = latch) {
-	  latch = row[j];
-	  if (equal(a[i], b[j]))
-	    row[j] = diag + 1;
-	  else {
-	    left = row[j-1] || 0;
-	    if (left > row[j])
-	      row[j] = left;
+      // ignore equal elements at both ends
+      for (; m && n; m--, n--)
+	if (!equal(a[m - 1], b[n - 1]))
+	  break;
+      for (skip = 0; m && n; skip++, m--, n--)
+	if (!equal(a[skip], b[skip]))
+	  break;
+
+      if (m && n) {
+	//build the c-table
+	for (j = 0; j < n; row[j++] = 0);
+	for (i = 0 ; i < m; i++) {
+	  c[i] = row = row.slice();
+	  for (diag = 0, j = 0; j < n; j++, diag = latch) {
+	    latch = row[j];
+	    if (equal(a[i + skip], b[j + skip]))
+	      row[j] = diag + 1;
+	    else {
+	      left = row[j - 1] || 0;
+	      if (left > row[j])
+		row[j] = left;
+	    }
 	  }
 	}
-      }
-      i--, j--;
+	i--, j--;
 
-      //row[j] now contains the length of the lcs
-      //compute the edit sequence from the table
-      var edit = [];
-      while (i > -1 && j > -1) {
-	switch (c[i][j]) {
-	  default:
-	    edit.unshift('=');
-	    i--; j--;
-	    break;
-	  case j && c[i][j - 1]:
-	    edit.unshift('+');
-	    j--;
-	    break;
-	  case i && c[i - 1][j]:
-	    edit.unshift('-');
-	    i--;
-	    break;
+	//row[j] now contains the length of the lcs
+	//compute the edit sequence from the table
+	while (i > -1 && j > -1) {
+	  switch (c[i][j]) {
+	    default:
+	      edit.unshift('=');
+	      i--; j--;
+	      break;
+	    case j && c[i][j - 1]:
+	      edit.unshift('+');
+	      j--;
+	      break;
+	    case i && c[i - 1][j]:
+	      edit.unshift('-');
+	      i--;
+	      break;
+	  }
 	}
+      } else {
+	i = m - 1;
+	j = n - 1;
       }
       for (; j > -1; j--)
 	edit.unshift('+');
@@ -150,23 +163,23 @@ var json_diff = (function() {
 	} else
 	  edit_replace.push(edit[n]);
       }
-      // console.log('>>> ' + edit.join('') + ' ' + edit_replace.join(''));
+      // console.log('>>> ' + skip + ' ' + edit.join('') + ' ' + edit_replace.join(''));
       edit = edit_replace;
 
       for (i = 0, j = 0, n = 0; n < edit.length; n++) {
 	switch(edit[n]) {
 	  case '*':
-	    diff_recursive(a[i], b[j], j);
+	    diff_recursive(a[i + skip], b[j + skip], j + skip);
 	  case '=':
 	    i++;
 	    j++;
 	    break;
 	  case '-':
-	    result('remove', j);
+	    result('remove', j + skip);
 	    i++;
 	    break;
 	  case '+':
-	    result('add', j, b[j]);
+	    result('add', j + skip, b[j + skip]);
 	    j++;
 	    break;
 	}

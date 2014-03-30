@@ -60,6 +60,9 @@ expect([1, 2, 3], [1, 4, 3], [{op: 'replace', path: '/1', value: 4}])
 expect({a: [9, 8, 7], b: 2, c: 3}, {a: [9, 7], b: 2, c: 4, d: 5},
        [{op: 'remove', path: '/a/1'}, {op: 'replace', path: '/c', value: 4}, {op: 'add', path: '/d', value: 5}])
 
+expect([1, 0, 0], [1, 1, 0], [{op: 'replace', path: '/1', value: 1}]);
+expect([1, 1, 0], [1, 0, 0], [{op: 'replace', path: '/1', value: 0}]);
+
 // Reverse examples from RFC 6902, as far as applicable:
 expect({foo: 'bar'}, {baz: 'qux', foo: 'bar'}, [{op: 'add', path: '/baz', value: 'qux'}])
 expect({foo: ['bar', 'baz']}, {foo: ['bar', 'qux', 'baz']}, [{op: 'add', path: '/foo/1', value: 'qux'}])
@@ -68,12 +71,6 @@ expect({foo: ['bar', 'qux', 'baz']}, {foo: ['bar', 'baz']}, [{op: 'remove', path
 expect({baz: 'qux', foo: 'bar'}, {baz: 'boo', foo: 'bar'}, [{op: 'replace', path: '/baz', value: 'boo'}])
 expect({foo: 'bar'}, {foo: 'bar', child: {grandchild: {}}}, [{op: 'add', path: '/child', value: {'grandchild': {}}}])
 expect({foo: ['bar']}, {foo: ['bar', ['abc', 'def']]}, [{op: 'add', path: '/foo/1', value: ['abc', 'def']}])
-
-// The following cases produce non-optimal diffs:
-expect([1, 0, 0], [1, 1, 0], [{op: 'add', path: '/1', value: 1}, {op: 'remove', path: '/3'}]);
-// ideal: [{op: 'replace', path: '/1', value: 1}]
-expect([1, 1, 0], [1, 0, 0], [{op: 'remove', path: '/1'}, {op: 'add', path: '/2', value: 0}]);
-// ideal: [{op: 'replace', path: '/1', value: 0}]
 
 if (failures) {
   console.log(failures + ' FAILURE(S)');
