@@ -89,12 +89,6 @@ var json_diff = (function() {
 	  row = [], c = [],
 	  left, diag, latch;
 
-      //make sure shorter sequence is the column sequence
-      if (m < n) {
-	var swap = a;
-	a = b;
-	b = swap;
-      }
       m = a.length;
       n = b.length;
 
