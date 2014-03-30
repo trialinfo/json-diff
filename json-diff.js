@@ -10,13 +10,13 @@
 /*
  * Function json_diff(a, b)
  *
- * Create an RFC 6902 style diff between two JSON objects.
+ * Create an RFC 6902 style patch between two JSON objects.
  * For example, json_diff({a: [9, 7]}, {a: [9, 8, 7]}) results in:
  * [{op: 'add', path: '/a/1', value: 8}].
  *
  * No cyclic references are allowed in a or b. Because the algorithm computes
  * differences between arrays in a way similar to the diff utility, it will
- * become very slow for large arrays of complex objects.
+ * become slow for large arrays of complex objects.
  */
 var json_diff = (function() {
   function equal(a, b) {
