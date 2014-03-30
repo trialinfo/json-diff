@@ -236,5 +236,5 @@ var json_diff = (function() {
   };
 })();
 
-if (exports)
+if (typeof exports !== 'undefined')
   exports.diff = json_diff;
