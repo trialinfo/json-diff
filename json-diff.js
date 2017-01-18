@@ -79,7 +79,8 @@ var json_diff = (function() {
       if (op === 'remove')
 	operations.push({op: op, path: pointer});
       else
-	operations.push({op: op, path: pointer, value: value});
+	operations.push({op: op, path: pointer,
+			 value: value === undefined ? null : value});
     }
 
     // Based on the Dynamic Programming Longest Common Subsequence algorithm at

@@ -77,6 +77,12 @@ expect([0, 0], [1, 1],
        [{op: 'replace', path: '/0', value: 1}, {op: 'replace', path: '/1', value: 1}]);
 // [{op: 'replace', path: '/', value: [1, 1]}]
 
+// In this example, the array element at index 0 is actually undefined, but
+// JSON.stringify({op:"add",path:"/0",value:undefined}) would result in
+// '{"op":"add","path":"/0"}' which is invalid, so we must cast such undefined
+// values to null.
+expect([], [,1], [{"op":"add","path":"/0","value":null},{"op":"add","path":"/1","value":1}]);
+
 if (failures) {
   console.log(failures + ' FAILURE(S)');
   process.exit(1);
